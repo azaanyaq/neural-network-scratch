@@ -21,3 +21,40 @@ def init_params(n):
   }
   """
   return params
+
+def sigmoid(arr): # Activation function g(z) (Sigmoid)
+    return 1 / (1 + np.exp(-1 * arr))
+
+def cost(y_hat, y): # both y_hat and y should be a n^L x m matrix
+
+    # 1. Losses is a n^L x m matrix
+    losses = - ( (y * np.log(y_hat)) + (1 - y)*np.log(1 - y_hat) )
+
+    m = y_hat.size # Calculates total number of predictions that make up y_hat
+
+    # 2. Summing across axis = 1 means we sum across rows, making this a n^L x 1 matrix
+    summed_losses = (1 / m) * np.sum(losses, axis = 1)
+
+    return np.sum(summed_losses)
+
+def prepare_data(n):
+  X = np.array([ # Weight (lbs) and height (inches) training values
+      [150, 70], 
+      [254, 73],
+      [312, 68],
+      [120, 60],
+      [154, 61],
+      [212, 65],
+      [216, 67],
+      [145, 67],
+      [184, 64],
+      [130, 69]
+    ])
+
+  y = np.array([0,1,1,0,0,1,1,0,1,0]) # Training labels: 1 for at risk, 0 for not at risk
+
+  m = 10 # Number of training samples
+  A0 = X.T # Transposes the matrix via .T function, obtaining A^[0] in shape n^[0] x m
+  Y = y.reshape(n[-1], m) # Reshaping training lables to fit output layer (-1 index works for anything)
+
+  return A0, Y, m
