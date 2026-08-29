@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def init_params(n):
-  
   L = len(n) - 1 # Number of layers (excluding input layer)
   params = {"n": n, "L": L} # Creating dictionary with 2 entries
 
@@ -58,3 +57,47 @@ def prepare_data(n):
   Y = y.reshape(n[-1], m) # Reshaping training lables to fit output layer (-1 index works for anything)
 
   return A0, Y, m
+
+def feed_forward(A0, params):
+  L = params["L"] # Extracts layer count list
+  n = params["n"] # Extracts layer size list
+
+  cache = {"A0": A0} # Creates a cache dictionary with A0 first entry
+  A = A0 # Initialise value A (firstly as A0)
+
+  for l in range(1, L + 1): # l in range 1 to (and including) L 
+    W = params[f"W{l}"] # Grabs weights for layer l
+    b = params[f"b{l}"] # Grabs biases for layer l
+    Z = W @ A + b # Matrix multiplication and addition to find pre-activation value
+    A = sigmoid(Z) # Find post-activation value
+    cache[f"A{l}"] = A # Add to the cache dictionary
+
+  y_hat = A 
+
+  return y_hat, cache
+
+def backprop_layer(l, params, cache, m, Y, propagator_dC_dA): # l is what layer gradients are being computed
+  L = params["L"] # Extract layer count list
+  n = params["n"] # Extract layer size list
+
+  A_l = cache[f"A{l}"] # Extracting A value of this layer
+  A_prev = cache[f"A{l - 1}"] # Extracting A value of previous layer
+  W_l = params[f"W{l}"] # Extracting weights of this layer
+
+  if l == L: # Output layer
+    dC_dZ = (1 / m) * (A_l - Y) # Calculates dC/dZ directly from Y
+  else: # Every other layer
+    dA_dZ = A_l * (1 - A_l) 
+    dC_dZ = propagator_dC_dA * dA_dZ # Calculates dC/dZ from propogator handed down
+  assert dC_dZ.shape == (n[l], m) 
+
+  dC_dW = dC_dZ @ A_prev.T
+  assert dC_dW.shape == (n[l], n[l - 1])
+
+  dC_db = np.sum(dC_dZ, axis=1, keepdims=True)
+  assert dC_db.shape == (n[l], 1)
+
+  dC_dA_prev = W_l.T @ dC_dZ  # Propagator for the layer below
+  assert dC_dA_prev.shape == (n[l - 1], m)
+
+  return dC_dW, dC_db, dC_dA_prev
