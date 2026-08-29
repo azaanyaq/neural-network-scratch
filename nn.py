@@ -6,7 +6,7 @@ def init_params(n):
   L = len(n) - 1 # Number of layers (excluding input layer)
   params = {"n": n, "L": L} # Creating dictionary with 2 entries
 
-  for l in range(1, L + 1): # l in ranges 1 to (and including) L
+  for l in range(1, L + 1): # l in ranges 1 to (and including) L, adding entries to dictionary
     params[f"W{l}"] = np.random.randn(n[l], n[l - 1]) # Weight matrix follows n^[l] x n^[l-1]
     params[f"b{l}"] = np.random.randn(n[l], 1) # Bias matrix follows n^[l] x 1
 
