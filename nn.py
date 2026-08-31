@@ -40,6 +40,8 @@ def prepare_data(X, y, n):
   # X: Matrix of raw samples
   # y: Array of training labels
 
+  X = (X - X.mean(axis=0)) / X.std(axis=0) # Standardising (Z-score normalisation) each feature (column) to mean 0, std 1
+
   m = X.shape[0] # Number of training samples
   A0 = X.T # Transposes the matrix using the .T function, obtaining A^[0] in shape n^[0] x m
   Y = y.reshape(n[-1], m) # Reshaping training lables to fit output layer (-1 index works for anything)
