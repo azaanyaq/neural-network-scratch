@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Neurel Network: sigmoid output + binary cross entropy
+
 def init_params(n):
   L = len(n) - 1 # Number of layers (excluding input layer)
   params = {"n": n, "L": L} # Creating dictionary with 2 entries
@@ -151,9 +153,9 @@ X = np.array([
 ])
 
 # y must be a 1D array with exactly 1 label per sample
-y = np.array([1,1,1,0,1,0,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,0,1,0,0,1,0,0,1,1,0,0,0,0,1,0,1,1,1,1,0,1,1,
-              1,0,0,1,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,1,1,1,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,0,0,1,1,
-              0,1,1,1,0,0,0,0,1,1])
+y = np.array([1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,0,0,1,1,0,0,1,0,1,0,1,1,1,1,0,1,1,
+              1,0,0,1,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,1,1,2,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,4,0,1,1,
+              0,1,1,1,0,1,0,0,1,1])
 
 n = [2, 50, 50, 50, 50, 1] # n[0] must match X's number of columns (features)
 
