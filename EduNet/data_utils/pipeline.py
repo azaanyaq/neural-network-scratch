@@ -1,16 +1,5 @@
 import pandas as pd
 
-# ============================================================
-# Turns a real, messy CSV (local path or URL — mixed numeric/categorical
-# columns, missing values) into a clean (X, y) numpy pair ready for
-# NeuralNetworkBinary.prepare_data. Each step is its own function, plus
-# load_dataset() chains all of them for the one-call version — same
-# "call each piece yourself, or use the shortcut" philosophy as
-# NeuralNetworkBinary itself.
-#
-# Nothing runs on import — only when you actually call these functions.
-# ============================================================
-
 
 def load_csv(path_or_url):
   """pd.read_csv handles both a local path and a URL natively."""
@@ -28,6 +17,13 @@ def handle_missing(df, strategy="drop"):
     return df.dropna()
   if strategy == "mean":
     numeric_cols = df.select_dtypes(include="number").columns
+    all_nan_cols = [c for c in numeric_cols if df[c].isna().all()]
+    if all_nan_cols:
+      raise ValueError(
+          f"column(s) {all_nan_cols} are entirely missing — there's no "
+          f"data to compute a mean from. Drop the column(s) first, or use "
+          f"strategy='drop'."
+      )
     df = df.copy()
     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
     return df.dropna()
@@ -41,6 +37,13 @@ def encode_categorical(df, columns=None):
   net that it would be for linear regression."""
   if columns is None:
     columns = df.select_dtypes(include=["object", "category"]).columns.tolist()
+  nan_cols = [c for c in columns if df[c].isna().any()]
+  if nan_cols:
+    print(f"encode_categorical(): column(s) {nan_cols} have missing values — "
+          f"those rows will be encoded as 0 across every dummy column for "
+          f"that feature (indistinguishable from a real row), since "
+          f"get_dummies() drops NaN as a category by default. Call "
+          f"handle_missing() first if that's not what you want.")
   return pd.get_dummies(df, columns=columns)
 
 
@@ -65,6 +68,12 @@ def load_dataset(path_or_url, target_column, positive_label=None,
   df = load_csv(path_or_url)
   if drop_columns:
     df = df.drop(columns=list(drop_columns))
+  # A missing target value has no valid label to fill in with -- mean-
+  # imputing it (missing_strategy="mean") would fabricate a fractional
+  # "class" that's never a real label, silently corrupting that row. Drop
+  # rows with a missing target before handle_missing() runs on the rest of
+  # the columns, regardless of which missing_strategy is chosen.
+  df = df.dropna(subset=[target_column])
   df = handle_missing(df, strategy=missing_strategy)
 
   y_raw = df[target_column]
