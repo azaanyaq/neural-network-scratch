@@ -12,23 +12,21 @@ class GradientCheck(Explainable):
       "where numerical[i] ~= (cost(theta_i + eps) - cost(theta_i - eps)) / (2*eps)"
   )
   _why_used = (
-      "The only way to verify backprop is actually correct, rather than "
-      "just 'runs without crashing.' A subtle sign error, wrong transpose, "
-      "or wrong axis in backprop_layer can still train something, "
-      "decrease the cost, and look completely fine — gradient checking is "
-      "a fully independent, brute-force way (finite differences directly "
-      "on the cost function) to confirm the analytical gradient is right. "
-      "Especially worth running right after adding a new activation or "
-      "cost function, since a wrong derivative there would otherwise be "
-      "very hard to notice."
+      "The only real way to verify backprop is correct, not just that it "
+      "runs without crashing. A subtle sign error or wrong axis in "
+      "backprop_layer can still train something and decrease the cost "
+      "while being completely wrong. Gradient checking compares the "
+      "analytical gradient against an independent, brute-force estimate "
+      "using finite differences. Run it especially after adding a new "
+      "activation or cost function, since a wrong derivative there is "
+      "otherwise hard to notice."
   )
   _why_not = (
-      "Slow — two full forward passes per parameter checked — so it's "
-      "never run during actual training, only as a one-off correctness "
-      "check (pass num_checks to sample a subset on a larger network). It "
-      "also only verifies the math is internally consistent, not that "
-      "the architecture or hyperparameters are a good choice for your "
-      "problem."
+      "Slow: two full forward passes per parameter checked, so it is "
+      "never run during actual training. Use num_checks to sample a "
+      "subset on a larger network. It also only verifies the math is "
+      "internally consistent, not that the architecture or "
+      "hyperparameters are a good choice for your problem."
   )
 
 

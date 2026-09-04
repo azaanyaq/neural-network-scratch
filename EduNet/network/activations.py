@@ -5,17 +5,16 @@ from .explainable import Explainable
 class Sigmoid(Explainable):
   _formula = "A = 1 / (1 + e^-Z)"
   _why_used = (
-      "The classic activation function — smooth, and its output is bounded "
-      "in (0, 1), so it reads naturally as a probability. That's why it's "
-      "still the standard choice for an output layer doing binary "
-      "classification, even when it's not used in the hidden layers."
+      "A smooth function whose output is bounded between 0 and 1, so it "
+      "reads naturally as a probability. This makes it the standard choice "
+      "for a binary classification output layer, even in networks that use "
+      "a different activation for hidden layers."
   )
   _why_not = (
-      "Vanishing-gradient prone: its derivative maxes out at 0.25 and "
-      "shrinks fast away from Z=0, so a deep stack of sigmoid hidden "
+      "Prone to vanishing gradients. Its derivative maxes out at 0.25 and "
+      "shrinks quickly away from Z=0, so a deep stack of sigmoid hidden "
       "layers barely learns in its earliest layers. Modern networks "
-      "mostly reserve it for the output layer and use ReLU (or similar) "
-      "for hidden layers instead."
+      "mostly use ReLU or similar for hidden layers instead."
   )
 
   @staticmethod
@@ -30,15 +29,15 @@ class Sigmoid(Explainable):
 class ReLU(Explainable):
   _formula = "A = max(0, Z)"
   _why_used = (
-      "Cheap to compute, and doesn't suffer vanishing gradient for "
-      "positive inputs — the default choice for hidden layers in most "
-      "modern networks."
+      "Cheap to compute and does not suffer vanishing gradients for "
+      "positive inputs. This makes it the default choice for hidden "
+      "layers in most modern networks."
   )
   _why_not = (
-      "\"Dying ReLU\": a neuron whose weights push it permanently negative "
-      "outputs exactly 0 forever and stops learning entirely. It's also "
-      "unbounded, so it's a poor choice for an output layer that needs to "
-      "represent a probability."
+      "A neuron whose weights push it permanently negative outputs zero "
+      "forever and stops learning. This is called a dying ReLU. It is "
+      "also unbounded, so it is a poor choice for an output layer that "
+      "needs to represent a probability."
   )
 
   @staticmethod
@@ -53,14 +52,14 @@ class ReLU(Explainable):
 class Tanh(Explainable):
   _formula = "A = tanh(Z)"
   _why_used = (
-      "Zero-centered output (unlike Sigmoid, which is always positive), "
-      "which tends to help gradient descent converge better in hidden "
+      "Zero-centered output, unlike Sigmoid, which is always positive. "
+      "This tends to help gradient descent converge faster in hidden "
       "layers."
   )
   _why_not = (
-      "Still vanishing-gradient prone, just less severely than Sigmoid — "
-      "in deep networks, ReLU is generally preferred for hidden layers "
-      "for that reason."
+      "Still prone to vanishing gradients, just less severely than "
+      "Sigmoid. In deep networks, ReLU is usually preferred for hidden "
+      "layers instead."
   )
 
   @staticmethod
@@ -73,20 +72,18 @@ class Tanh(Explainable):
 
 
 class Identity(Explainable):
-  """Linear/no-op activation — pairs with MeanSquaredError for regression."""
+  """Linear/no-op activation. Pairs with MeanSquaredError for regression."""
 
   _formula = "A = Z"
   _why_used = (
-      "Predicting an unbounded real number (a price, a temperature, a "
-      "count) — regression — needs an output layer that isn't squashed "
-      "into any particular range, so no activation at all is the correct "
-      "choice."
+      "Regression tasks predict an unbounded real number, like a price "
+      "or a temperature. The output layer should not be squashed into "
+      "any particular range, so no activation at all is the right choice."
   )
   _why_not = (
-      "Never useful in a hidden layer — stacking linear layers with no "
-      "nonlinearity between them collapses mathematically into a single "
-      "linear layer, so the network gains no extra representational power "
-      "from the extra depth."
+      "Never useful in a hidden layer. Stacking linear layers with no "
+      "nonlinearity between them collapses into a single linear layer, "
+      "so the extra depth adds no representational power."
   )
 
   @staticmethod

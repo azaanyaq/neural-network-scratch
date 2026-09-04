@@ -8,16 +8,15 @@ class BinaryCrossEntropy(Explainable):
   _formula = "C = -mean( y*log(y_hat) + (1-y)*log(1-y_hat) )"
   _why_used = (
       "The standard loss for binary classification. Paired with a Sigmoid "
-      "output, its gradient stays useful even when the network is "
-      "confidently wrong — exactly when you need the strongest learning "
-      "signal."
+      "output, its gradient stays strong even when the network is "
+      "confidently wrong, which is exactly when the strongest learning "
+      "signal is needed."
   )
   _why_not = (
-      "Breaks numerically if y_hat ever hits exactly 0 or 1 (log(0) is "
-      "undefined) — needs an output activation that stays strictly inside "
-      "(0, 1), like Sigmoid. Also the wrong tool for regression or "
-      "multi-class problems (those need MeanSquaredError or categorical "
-      "cross-entropy respectively)."
+      "Breaks numerically if y_hat ever reaches exactly 0 or 1, since "
+      "log(0) is undefined. This requires an output activation that "
+      "stays strictly between 0 and 1, like Sigmoid. It is also the "
+      "wrong tool for regression or multi-class problems."
   )
 
   @staticmethod
@@ -42,16 +41,16 @@ class MeanSquaredError(Explainable):
 
   _formula = "C = mean( (y_hat - y)^2 )"
   _why_used = (
-      "The natural fit for regression — \"average squared distance from "
-      "the true value.\" What ordinary least-squares fitting is built on."
+      "The natural fit for regression: the average squared distance from "
+      "the true value. This is the same idea ordinary least-squares "
+      "fitting is built on."
   )
   _why_not = (
-      "If paired with a Sigmoid output for classification — a very "
-      "natural first instinct — the sigmoid's saturation makes MSE's "
-      "gradient go nearly flat exactly when predictions are very wrong, "
-      "so learning stalls right when it matters most. That's the actual "
-      "reason BinaryCrossEntropy exists as a separate loss rather than "
-      "everyone just using MSE for classification too."
+      "Pairing this with a Sigmoid output for classification seems "
+      "natural at first, but the sigmoid's saturation makes the gradient "
+      "go nearly flat exactly when predictions are very wrong. Learning "
+      "stalls right when it matters most. This is the real reason "
+      "BinaryCrossEntropy exists as a separate loss."
   )
 
   @staticmethod

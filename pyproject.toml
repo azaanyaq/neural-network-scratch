@@ -3,11 +3,19 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "EduNet"
+name = "pyedunet"
 version = "0.1.0"
 description = "A from-scratch, educational neural network library with an interactive training visualizer"
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = ["numpy>=1.24"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 [project.optional-dependencies]
 visualizer = ["matplotlib>=3.5"]
